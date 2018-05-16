@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
+#include <assert.h>
 #include "trie.h"
 #include "gttypes.h"
 #include "myfile.h"
@@ -242,11 +244,20 @@ int sortAndWriteFile(TRIE_NODE* root, const char *fileName)
 /*
  *  prefixmatch for input string in console
  * */
-int prefixMatch(TRIE_NODE* root)
+int prefixMatch(TRIE_NODE* root, char *matchstr)
 {
+    if(NULL == root)
+    {
+        __my_debug("null pointer\n");
+        return ERROR;
+    }
 
-    printf("please enter prefix string, only 0, 1, x:\n");
-    printf("if you want to exit, please enter 'e'\n");
+    if(NULL == matchstr)
+    {
+        __my_debug("input null point\n");
+        return ERROR;
+    }
+    
     /*initialize temp buffer*/
     char buf[MAX_COL];
     memset(buf, 0, sizeof(char) * MAX_COL);
@@ -255,131 +266,169 @@ int prefixMatch(TRIE_NODE* root)
              that used to save sorted data in trie tree*/
     char hd_buf[MAX_LINE][MAX_COL];
     memset(hd_buf, 0, sizeof(char) * MAX_LINE * MAX_COL);
- 
-    /*
-     * input 0-1 data in console
-     * */
-    char input[MAX_COL];
-    scanf("%s", input);
 
     TRIE_NODE* curp = root;/*current node*/
-    while(0 != strcmp(input, "e"))/*did not receive the exit instruction
-                                        continue to enter*/
+    
+    curp = root;
+    int i;
+    for(i = 0; i <= strlen(matchstr) - 1; i++)/*loop all 
+                                character in input string*/
     {
-        curp = root;
-        int i;
-        for(i = 0; i <= strlen(input) - 1; i++)/*loop all 
-                                    character in input string*/
+        int index = hstrie(matchstr[i]);/*hash maping input character*/
+        if(-1 == index)/*input wrong number, out of 0, 1, x*/
         {
-            int index = hstrie(input[i]);/*hash maping input character*/
-            if(-1 == index)/*input wrong number, out of 0, 1, x*/
-            {
-                printf("please input right 01x number!\n");
-                break;
-            }
-            if(NULL != curp->next[index])/*child node exeists, and equle
-                                            to input character, jump into next
-                                            node*/
-            {
-                curp = curp->next[index];
-            }
-            else/*no matching string in trie tree*/
-            {
-                printf("no matching string in data\n");
-                return OK;
-            }
-        }
-        if(strlen(input) == i)/*enter complete, break*/
-        {
+            //printf("please input right 01x number!\n");
             break;
         }
-        scanf("%s", input);
-    }
-    if(0 == strcmp(input, "e"))/*if enter 'e' to exit
-                                 , print info*/
-    {
-        printf("matching exit\n");
-        return OK;
+        if(NULL != curp->next[index])/*child node exeists, and equle
+                                        to input character, jump into next
+                                        node*/
+        {
+            curp = curp->next[index];
+        }
+        else/*no matching string in trie tree*/
+        {
+            printf("no matching string in data\n");
+            return OK;
+        }
     }
 
     printf("find string\n");
-    printf("do you want to print all matching string?y(yes), n(no): \n");
-
-    /*
-     * input instructions to determine whether to print string
-     * */
-    char in[MAX_COL];
     int a = 0;
-    scanf("%s", in);
-    while(0 != strcmp(in, "e"))/*did not recive quite instruction, continue*/
-    {
-        /*travers all string with same prefix*/
-        if(ERROR == trie_travers(hd_buf, buf, curp, 0, &a))
-        {
-            __my_debug("travers error");
-            return ERROR;
-        }
 
-        if(0 == strcmp(in, "y") || 0 == strcmp(in, "yes"))/*print finding string*/
-        {
-            FILE *fp = fopen("result.txt", "w");
-            /*print the string, with same prefix*/
-            for(int i = 0; i < a; i++)
-            {
-                //printf("%s%s\n", input, hd_buf[i]);
-                fprintf(fp, "%s%s\n", input, hd_buf[i]);
-            }
-            fclose(fp);
-            break;
-        }
-        else if(0 == strcmp(in, "n") || 0 == strcmp(in, "no"))/*did not print string, break*/
-        {
-            break;
-        }
-        else/*did not enter right info*/
-        {
-            printf("please input yes or no: \n");
-        }
-        scanf("%s", in);
+    /*travers all string with same prefix*/
+    if(ERROR == trie_travers(hd_buf, buf, curp, 0, &a))
+    {
+        __my_debug("travers error");
+        return ERROR;
     }
 
-    /*
-     *  input instruction determine whether write info to file
-     * */
+    FILE *fp = fopen("result.txt", "a");
 
-    memset(in, 0, MAX_COL);
-    printf("do you want to save matching string to a file? y(yes), n(no): \n");
-    while(0 != strcmp(in, "e"))/*did not recive quite instruct
-                                 , continue*/
+    /*print the string, with same prefix*/
+    for(int i = 0; i < a; i++)
     {
-        if(0 == strcmp(in, "y") || 0 == strcmp(in, "yes"))/*save data to file, break*/
-        {
-            FILE *fp = fopen("result.txt", "w");
-            if(NULL == fp)
-            {
-                __my_debug("open file error");
-                return ERROR;
-            }
-            /*print the string, with same prefix*/
-            for(int i = 0; i < a; i++)
-            {
-                fprintf(fp, "%s%s\n", input, hd_buf[i]);
-            }
-            fclose(fp);
-            break;
-        }
-        else if(0 == strcmp(in, "n") || 0 == strcmp(in, "no"))/*did not save, break*/
-        {
-            break;
-        }
-        else/*did not enter right instruction*/
-        {
-            printf("please input yes or no: \n");
-        }
-        scanf("%s", in);
+        //printf("%s%s\n", input, hd_buf[i]);
+        fprintf(fp, "%s%s\n", matchstr, hd_buf[i]);
     }
+    fprintf(fp, "\n");
+    fclose(fp);
 
     printf("matching complete\n");
     return OK;
-
 }
+
+/*
+ *  classification data and write it into file
+ * */
+int myClassification(TRIE_NODE* root, unsigned int classnum)
+{
+    /*clear the file*/
+    FILE *fp = fopen("result.txt", "w");
+    if(NULL == fp)
+    {
+        __my_debug("openfile failed\n");
+        return ERROR;
+    }
+    fclose(fp);
+
+    if(NULL == root)//input null pointer
+    {
+        __my_debug("input null pointer\n");
+        return ERROR;
+    }
+
+    char **buffer;//used to save prefix
+    if(ERROR == convertNum2Bina(&buffer, classnum))//generate a fixed-length prefix
+    {
+        __my_debug("convert failed\n");
+        return ERROR;
+    }
+    
+    int row = pow(3, classnum);//row of buffer
+    int col = classnum;//col of buffer
+    int i;
+    for(i = 0; i <= row - 1; i++)
+    {
+        //printf("%s\n", buffer[i]);
+        prefixMatch(root, buffer[i]);// write same prefix into file
+    }
+
+    return OK;
+}
+
+/*
+ *  convert number to binary
+ * */
+int convertNum2Bina(char ***buf, int layers)
+{
+    /*input layers must > 0*/
+    if(layers <= 0)
+    {
+        __my_debug("more layer\n");
+        return ERROR;
+    }
+
+    /*assign the initial 2 dementional array {0, 1, x}*/
+    char **in; 
+    in = (char**)malloc(sizeof(char*) * MAX_NODE);
+    if(NULL == in)
+    {
+        __my_debug("malloc error\n");
+        return ERROR;
+    }
+    int i;
+    for(i = 0; i <= MAX_NODE - 1; i++)
+    {
+        in[i] = (char*)malloc(sizeof(char) * 1);
+    }
+    strcpy(in[0], "0");
+    strcpy(in[1], "1");
+    strcpy(in[2], "x");
+    
+    /*return in if input layers = 1*/
+    if(1 == layers)
+    {
+        *buf = in;
+    }
+
+    /*extent array*/
+    for(i = 1; i < layers; i++)
+    {
+        extent(in, buf, pow(3, i), i);
+        in = (*buf);
+    }
+
+    return OK;
+}
+
+/*
+ *  array growth
+ * */
+int extent(char **in, char ***res, int row, int col)
+{
+    if(NULL == in)
+    {
+        __my_debug("null pointer\n");
+        return ERROR;
+    }
+
+    char* hs[3] = {"0", "1", "x"};
+
+    *res = (char**)malloc(sizeof(char*) * MAX_NODE * row);
+    int i, j, k;
+    for(i = 0; i <= MAX_NODE * row - 1; i++)
+    {
+        (*res)[i] = (char*)malloc(sizeof(char) * (col + 1));
+    }
+    
+    for(i = 0; i <= MAX_NODE - 1; i++)
+    {
+       for(j = 0; j <= row -1; j++)
+       {
+            strcpy((*res)[i * row + j], in[j]);
+            strcat((*res)[i * row + j], hs[i]);
+       }
+    }
+}
+

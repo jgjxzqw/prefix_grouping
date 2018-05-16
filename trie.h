@@ -118,7 +118,13 @@ int sortAndWriteFile(TRIE_NODE* root, const char* fileName);
 *Relation : none
 *OtherInfo : none
 ************************************************************************/
-int prefixMatch(TRIE_NODE* root);
+int prefixMatch(TRIE_NODE* root, char* matchstr);
 
+
+int myClassification(TRIE_NODE* root, unsigned int classnum);
+
+int convertNum2Bina(char ***buf, int classnum);
+
+int extent(char **in, char ***out, int row, int col);
 
 #endif //TRIE_H

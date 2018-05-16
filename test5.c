@@ -20,7 +20,6 @@ ModifyLog : None
 
 int main(int argc, char *argv[])
 {
-    print_proj_head();
     /*initialize buffer for saving file data*/
 	char buffer[MAX_LINE][MAX_COL];
     memset(buffer, 0, sizeof(char) * MAX_LINE * MAX_COL);
@@ -29,6 +28,7 @@ int main(int argc, char *argv[])
 	if(ERROR == readFile(buffer, "../Sample000111x.txt"))
     {
         __my_debug("read file error");
+        return -1;
     }
 
     /*create trie tree, and save buffer data into it*/
@@ -36,26 +36,28 @@ int main(int argc, char *argv[])
     if(NULL == root)
     {
         __my_debug("create trie tree error");
+        return -1;
     }
 
     /*write sorted data into result_sort.txt*/
     if(ERROR == sortAndWriteFile(root, "result_sort.txt"))
     {
         __my_debug("sort and wright file error");
+        return -1;
     }
-    printf("data has been sorted, and saved in sort_result.txt\n\n");
+    printf("data has been sorted, and saved in sort_result.txt\n");
 
-    /*perform prefix matching*/
-    if(ERROR == prefixMatch(root))
+    if(ERROR == myClassification(root, 2))
     {
-        __my_debug("prefix matching error");
+        __my_debug("classification failed\n");
+        return -1;
     }
 
     /*destroy the trie tree*/
-    
     if(ERROR == trie_destroy(root, 0))
     {
         __my_debug("trie destroy error");
+        return -1;
     }
 
 	return 0;
