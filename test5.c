@@ -25,36 +25,37 @@ int main(int argc, char *argv[])
     memset(buffer, 0, sizeof(char) * MAX_LINE * MAX_COL);
 
     /*read file into buffer*/
-	if(ERROR == readFile(buffer, "../Sample000111x.txt"))
+	if (ERROR == readFile(buffer, "../Sample000111x.txt"))
     {
-        __my_debug("read file error");
+        __my_debug("read file error\n");
         return -1;
     }
 
     /*create trie tree, and save buffer data into it*/
     TRIE_NODE* root = createBinaryTree(buffer);
-    if(NULL == root)
+    if (NULL == root)
     {
-        __my_debug("create trie tree error");
+        __my_debug("create trie tree error\n");
         return -1;
     }
 
     /*write sorted data into result_sort.txt*/
-    if(ERROR == sortAndWriteFile(root, "result_sort.txt"))
+    if (ERROR == sortAndWriteFile(root, "result_sort.txt"))
     {
-        __my_debug("sort and wright file error");
+        __my_debug("sort and wright file error\n");
         return -1;
     }
     printf("data has been sorted, and saved in sort_result.txt\n");
 
-    if(ERROR == myClassification(root, 2))
+    
+    if (ERROR == myClassification(root, 10))
     {
         __my_debug("classification failed\n");
         return -1;
     }
 
     /*destroy the trie tree*/
-    if(ERROR == trie_destroy(root, 0))
+    if (ERROR == trie_destroy(root))
     {
         __my_debug("trie destroy error");
         return -1;

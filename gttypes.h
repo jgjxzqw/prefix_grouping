@@ -14,15 +14,6 @@
 #define __my_debug(FORMAT, ARG...) \
     printf("%s:%d %s: " FORMAT, __FILE__, __LINE__, __FUNCTION__, ##ARG)
 
-#define print_proj_head() \
-        printf("\n\n/******************************************************\n\
-/*====================================================\n\
-/*this is a prefix matching project, that support \n\
-* saves the sorted data to fixed file and supports\n\
-* interactive prefix matching at the console.\n\
-/* let us begin:======================================\n\n\n\n");
-
-
 /*
  * Defining a binary tree node
  * val - node value

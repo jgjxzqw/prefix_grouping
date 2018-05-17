@@ -19,7 +19,7 @@ int readFile(char buffer[MAX_LINE][MAX_COL], const char *fileName)
 {
     /*initialize input stream*/
 	FILE *fpRead = fopen(fileName, "r");
-	if(NULL == fpRead)
+	if (NULL == fpRead)
 	{
 		//exit(0);
         __my_debug("can not open file");
@@ -29,7 +29,7 @@ int readFile(char buffer[MAX_LINE][MAX_COL], const char *fileName)
     int currow = 0;
 	while(!feof(fpRead))/*read input stream into buffer*/
 	{
-		if(NULL == fgets(buffer[currow], MAX_COL, fpRead))
+		if (NULL == fgets(buffer[currow], MAX_COL, fpRead))
 		{
 			break;
 		}
@@ -47,13 +47,13 @@ int writeFile(char buf[MAX_LINE][MAX_COL], const char *fileName)
 {
     /*initalize output stream*/
     FILE *fp = fopen(fileName, "w");
-    if(NULL == fp)
+    if (NULL == fp)
     {
         __my_debug("can not open file");
         return ERROR;
     }
 
-    for(int i = 0; i < MAX_LINE; i++)/*write data into output stream*/
+    for (int i = 0; i < MAX_LINE; i++)/*write data into output stream*/
     {
         fprintf(fp, "%s\n", buf[i]);
     } 

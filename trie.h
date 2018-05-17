@@ -77,7 +77,7 @@ int trie_travers(char hd_buf[MAX_LINE][MAX_COL], char buf[MAX_COL],
 *Relation : none
 *OtherInfo : none
 ************************************************************************/
-int trie_destroy(TRIE_NODE *root, int indx);
+int trie_destroy(TRIE_NODE *root);
 
 /***********************************************************************
 *FunctionName : createBinaryTree
@@ -118,13 +118,45 @@ int sortAndWriteFile(TRIE_NODE* root, const char* fileName);
 *Relation : none
 *OtherInfo : none
 ************************************************************************/
-int prefixMatch(TRIE_NODE* root, char* matchstr);
+int prefixMatch(TRIE_NODE *root, char *matchstr);
 
-
+/***********************************************************************
+*FunctionName : myClassification
+*Author : Zheng Qinwen
+*CreateDate : Thu 13 May 2018 04:44:51 PM
+*Descreption : Enter the string, and match the maximum string
+*InputParam : root - begin node of Trie tree for serching
+*OutputParam : None
+*ReturnValue : none
+*Relation : none
+*OtherInfo : none
+************************************************************************/
 int myClassification(TRIE_NODE* root, unsigned int classnum);
 
+/***********************************************************************
+*FunctionName : convertNum2Bina
+*Author : Zheng Qinwen
+*CreateDate : Thu 13 May 2018 04:44:51 PM
+*Descreption : Enter the string, and match the maximum string
+*InputParam : root - begin node of Trie tree for serching
+*OutputParam : None
+*ReturnValue : none
+*Relation : none
+*OtherInfo : none
+************************************************************************/
 int convertNum2Bina(char ***buf, int classnum);
 
-int extent(char **in, char ***out, int row, int col);
+/***********************************************************************
+*FunctionName : myExtent
+*Author : Zheng Qinwen
+*CreateDate : Thu 13 May 2018 04:44:51 PM
+*Descreption : Enter the string, and match the maximum string
+*InputParam : root - begin node of Trie tree for serching
+*OutputParam : None
+*ReturnValue : none
+*Relation : none
+*OtherInfo : none
+************************************************************************/
+int myExtent(char **in, char ***out, int row, int col);
 
 #endif //TRIE_H

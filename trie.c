@@ -35,8 +35,6 @@ int hstrie(char in)
 		default: /*input character is not '0', '1'
                         or 'x', wrong*/
 			printf("wrong input, please input 0, 1 or x\n");
-            //__my_debug("wrong input, 
-            //        please input 0, 1, or x");
             return -1;
             break;
 	}
@@ -49,7 +47,7 @@ TRIE_NODE* trie_create()
 {
     /*apply for memory for root node*/
 	TRIE_NODE *root = (TRIE_NODE*)malloc(sizeof(TRIE_NODE));
-	if(NULL == root)
+	if (NULL == root)
 	{
         __my_debug("aplly memory error");
 		return NULL;
@@ -69,18 +67,20 @@ int trie_insert(char *word, TRIE_NODE *root)
     /*current node in loop*/
     TRIE_NODE *cur = root;
 
-	for(int i = 0; i <= len - 1; i++)/*traverse all 
+	for (int i = 0; i <= len - 1; i++)/*traverse all 
                                        character in words*/
 	{
-		if(word[i] == '\n')/*break when words end*/
-			break;
+		if (word[i] == '\n')/*break when words end*/
+        {
+            break;
+        }	
 		int indhash = hstrie(word[i]);/*value after mapping*/
-		if(NULL == cur->next[indhash])/*when node is not 
+		if (NULL == cur->next[indhash])/*when node is not 
                                         in trie tree*/
 		{
 			/*apply memory for new node*/
             TRIE_NODE *newNode = (TRIE_NODE*)malloc(sizeof(TRIE_NODE));
-			if(NULL == newNode)
+			if (NULL == newNode)
             {
                 __my_debug("apply memory error");
                 return ERROR;
@@ -105,22 +105,26 @@ int trie_insert(char *word, TRIE_NODE *root)
 int trie_travers(char hd_buf[MAX_LINE][MAX_COL], char buf[MAX_COL], 
         TRIE_NODE *node, int indx, int* row)
 {
+    int i;
+
     /*no infomation in node, return*/
-    if(NULL == node)
+    if (NULL == node)
+    {
         return OK;
+    }
 
     TRIE_NODE* curr_p = node;/*current pointer*/
-    if(node->isword)/*visit the last character in words*/
+    if (node->isword)/*visit the last character in words*/
     {
         strcpy(hd_buf[(*row)], buf);
         (*row)++;
     }
-    for(int i = 0; i < MAX_NODE; i++)/*visit all data in trie tree*/
+    for (i = 0; i < MAX_NODE; i++)/*visit all data in trie tree*/
     {
-        if(NULL != node->next[i])/*find next node*/
+        if (NULL != node->next[i])/*find next node*/
         {
             buf[indx] = node->next[i]->val;
-            if(ERROR == trie_travers(hd_buf, 
+            if (ERROR == trie_travers(hd_buf, 
                         buf, 
                         node->next[i], 
                         indx + 1, 
@@ -138,36 +142,37 @@ int trie_travers(char hd_buf[MAX_LINE][MAX_COL], char buf[MAX_COL],
 /*
  *  destroy the trie tree
  * */
-int trie_destroy(TRIE_NODE *node, int indx)
+int trie_destroy(TRIE_NODE *node)
 {
     /*current node is null, return*/
-    if(NULL == node)
+    if (NULL == node)
+    {
         return OK;
+    }
 
     TRIE_NODE* curr_p = node;/*current node*/
-    
+    int i;
     int flag = 0;/*flag, that used to mark if 
                    the child node is empty*/
-    for(int i = 0; i < MAX_NODE; i++)/*marking*/
+    for (i = 0; i < MAX_NODE; i++)/*marking*/
     {
-        if(NULL != node->next[i])
+        if (NULL != node->next[i])
         {
             flag = 1;
         }
     }
-    if(flag)/*if child node is empty, free node*/
+    if (flag)/*if child node is empty, free node*/
     {
         free(curr_p);
         return OK;
     }
     
-    for(int i = 0; i < MAX_NODE; i++)/*if child node is not
+    for (i = 0; i < MAX_NODE; i++)/*if child node is not
                                 empty, jump into child node*/
     {
-        if(NULL != node->next[i])
+        if (NULL != node->next[i])
         {
-            if(ERROR == trie_destroy(node->next[i], 
-                        indx + 1))
+            if (ERROR == trie_destroy(node->next[i]))
             {
                 __my_debug("node destroy error");
                 return ERROR;
@@ -182,18 +187,19 @@ int trie_destroy(TRIE_NODE *node, int indx)
  * */
 TRIE_NODE* createBinaryTree(char buffer[MAX_LINE][MAX_COL])
 {
+    int i;
 	TRIE_NODE* root = trie_create();/*initialize root node*/
-    if(NULL == root)
+    if (NULL == root)
     {
         __my_debug("trie create error");
         return NULL;
     }
 
-    for(int i = 0; i < MAX_LINE; i++)/*insert all words 
+    for (i = 0; i < MAX_LINE; i++)/*insert all words 
                                        in buffer*/
     {
         
-        if(ERROR == trie_insert(buffer[i], 
+        if (ERROR == trie_insert(buffer[i], 
                     root))
         {
             __my_debug("insert words error");
@@ -221,7 +227,7 @@ int sortAndWriteFile(TRIE_NODE* root, const char *fileName)
     int a = 0;
 
     /*save trie tree data into 2 dementional buffer*/
-    if(ERROR == trie_travers(hd_buf, 
+    if (ERROR == trie_travers(hd_buf, 
                 buf, 
                 root, 
                 0, 
@@ -232,7 +238,7 @@ int sortAndWriteFile(TRIE_NODE* root, const char *fileName)
     }
 
     /*write data into file*/
-    if(ERROR == writeFile(hd_buf, 
+    if (ERROR == writeFile(hd_buf, 
                 "sort_result5.txt"))
     {
         __my_debug("write file error");
@@ -246,13 +252,16 @@ int sortAndWriteFile(TRIE_NODE* root, const char *fileName)
  * */
 int prefixMatch(TRIE_NODE* root, char *matchstr)
 {
-    if(NULL == root)
+    int i;
+    int a = 0;
+
+    if (NULL == root)
     {
         __my_debug("null pointer\n");
         return ERROR;
     }
 
-    if(NULL == matchstr)
+    if (NULL == matchstr)
     {
         __my_debug("input null point\n");
         return ERROR;
@@ -269,18 +278,15 @@ int prefixMatch(TRIE_NODE* root, char *matchstr)
 
     TRIE_NODE* curp = root;/*current node*/
     
-    curp = root;
-    int i;
-    for(i = 0; i <= strlen(matchstr) - 1; i++)/*loop all 
+    for (i = 0; i <= strlen(matchstr) - 1; i++)/*loop all 
                                 character in input string*/
     {
         int index = hstrie(matchstr[i]);/*hash maping input character*/
-        if(-1 == index)/*input wrong number, out of 0, 1, x*/
+        if (-1 == index)/*input wrong number, out of 0, 1, x*/
         {
-            //printf("please input right 01x number!\n");
             break;
         }
-        if(NULL != curp->next[index])/*child node exeists, and equle
+        if (NULL != curp->next[index])/*child node exeists, and equle
                                         to input character, jump into next
                                         node*/
         {
@@ -288,16 +294,14 @@ int prefixMatch(TRIE_NODE* root, char *matchstr)
         }
         else/*no matching string in trie tree*/
         {
-            printf("no matching string in data\n");
+            printf("%s no matching string in data\n", matchstr);
             return OK;
         }
     }
 
-    printf("find string\n");
-    int a = 0;
 
     /*travers all string with same prefix*/
-    if(ERROR == trie_travers(hd_buf, buf, curp, 0, &a))
+    if (ERROR == trie_travers(hd_buf, buf, curp, 0, &a))
     {
         __my_debug("travers error");
         return ERROR;
@@ -306,7 +310,7 @@ int prefixMatch(TRIE_NODE* root, char *matchstr)
     FILE *fp = fopen("result.txt", "a");
 
     /*print the string, with same prefix*/
-    for(int i = 0; i < a; i++)
+    for (i = 0; i < a; i++)
     {
         //printf("%s%s\n", input, hd_buf[i]);
         fprintf(fp, "%s%s\n", matchstr, hd_buf[i]);
@@ -314,7 +318,7 @@ int prefixMatch(TRIE_NODE* root, char *matchstr)
     fprintf(fp, "\n");
     fclose(fp);
 
-    printf("matching complete\n");
+    printf("%s matching complete\n", matchstr);
     return OK;
 }
 
@@ -323,34 +327,34 @@ int prefixMatch(TRIE_NODE* root, char *matchstr)
  * */
 int myClassification(TRIE_NODE* root, unsigned int classnum)
 {
+    int row = pow(3, classnum);//row of buffer
+    int col = classnum;//col of buffer
+    int i;
+
     /*clear the file*/
     FILE *fp = fopen("result.txt", "w");
-    if(NULL == fp)
+    if (NULL == fp)
     {
         __my_debug("openfile failed\n");
         return ERROR;
     }
     fclose(fp);
 
-    if(NULL == root)//input null pointer
+    if (NULL == root)//input null pointer
     {
         __my_debug("input null pointer\n");
         return ERROR;
     }
 
     char **buffer;//used to save prefix
-    if(ERROR == convertNum2Bina(&buffer, classnum))//generate a fixed-length prefix
+    if (ERROR == convertNum2Bina(&buffer, classnum))//generate a fixed-length prefix
     {
         __my_debug("convert failed\n");
         return ERROR;
     }
     
-    int row = pow(3, classnum);//row of buffer
-    int col = classnum;//col of buffer
-    int i;
-    for(i = 0; i <= row - 1; i++)
+    for (i = 0; i <= row - 1; i++)
     {
-        //printf("%s\n", buffer[i]);
         prefixMatch(root, buffer[i]);// write same prefix into file
     }
 
@@ -362,40 +366,41 @@ int myClassification(TRIE_NODE* root, unsigned int classnum)
  * */
 int convertNum2Bina(char ***buf, int layers)
 {
+    int i;
+    char **in;
+
     /*input layers must > 0*/
-    if(layers <= 0)
+    if (layers <= 0)
     {
         __my_debug("more layer\n");
         return ERROR;
     }
 
     /*assign the initial 2 dementional array {0, 1, x}*/
-    char **in; 
     in = (char**)malloc(sizeof(char*) * MAX_NODE);
-    if(NULL == in)
+    if (NULL == in)
     {
         __my_debug("malloc error\n");
         return ERROR;
     }
-    int i;
-    for(i = 0; i <= MAX_NODE - 1; i++)
+    for (i = 0; i <= MAX_NODE - 1; i++)
     {
         in[i] = (char*)malloc(sizeof(char) * 1);
     }
     strcpy(in[0], "0");
     strcpy(in[1], "1");
     strcpy(in[2], "x");
-    
+
     /*return in if input layers = 1*/
-    if(1 == layers)
+    if (1 == layers)
     {
         *buf = in;
     }
 
     /*extent array*/
-    for(i = 1; i < layers; i++)
+    for (i = 1; i < layers; i++)
     {
-        extent(in, buf, pow(3, i), i);
+        myExtent(in, buf, pow(3, i), i);
         in = (*buf);
     }
 
@@ -405,30 +410,46 @@ int convertNum2Bina(char ***buf, int layers)
 /*
  *  array growth
  * */
-int extent(char **in, char ***res, int row, int col)
+int myExtent(char **in, char ***res, int row, int col)
 {
-    if(NULL == in)
+    int i, j, k;
+    char* hs[MAX_NODE] = {"0", "1", "x"};
+    
+    if (NULL == in)
     {
         __my_debug("null pointer\n");
         return ERROR;
     }
 
-    char* hs[3] = {"0", "1", "x"};
-
     *res = (char**)malloc(sizeof(char*) * MAX_NODE * row);
-    int i, j, k;
-    for(i = 0; i <= MAX_NODE * row - 1; i++)
+    if(NULL == (*res))
+    {
+        __my_debug("malloc error\n");
+        return ERROR;
+    }
+    for (i = 0; i <= MAX_NODE * row - 1; i++)
     {
         (*res)[i] = (char*)malloc(sizeof(char) * (col + 1));
+        if(NULL == (*res)[i])
+        {
+            __my_debug("malloc error\n");
+            return ERROR;
+        }
     }
     
-    for(i = 0; i <= MAX_NODE - 1; i++)
+    for (i = 0; i <= MAX_NODE - 1; i++)
     {
-       for(j = 0; j <= row -1; j++)
+       for (j = 0; j <= row -1; j++)
        {
             strcpy((*res)[i * row + j], in[j]);
             strcat((*res)[i * row + j], hs[i]);
        }
     }
-}
 
+    /*free memory*/
+    for(i = 0; i < row; i++)
+    {
+        free(in[i]);
+    }
+    free(in);
+}

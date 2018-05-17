@@ -1,8 +1,7 @@
-#ifndef MYFILE_H_
+#ifndef MYFILE_H_ //_...
 #define MYFILE_H_
 
 #include "gttypes.h"
-
 
 /***********************************************************************
 *FunctionName : readFile
