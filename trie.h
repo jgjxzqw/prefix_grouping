@@ -118,7 +118,18 @@ int sortAndWriteFile(TRIE_NODE* root, const char* fileName);
 *Relation : none
 *OtherInfo : none
 ************************************************************************/
-int prefixMatch(TRIE_NODE *root, char *matchstr);
+int prefixMatch(TRIE_NODE *root
+        , char *matchstr
+        , char matchbuf[MAX_LINE][MAX_COL]
+        , TRIE_NODE **cp);
+
+int prefixMatchNode(TRIE_NODE *root
+        , char *matchstr
+        , TRIE_NODE **cp);
+
+int prefixMatchBuf(TRIE_NODE *curp
+        , char *matchstr
+        , char matchbuf[MAX_LINE][MAX_COL]);
 
 /***********************************************************************
 *FunctionName : myClassification

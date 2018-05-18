@@ -1,5 +1,5 @@
-#ifndef GTTYPES_H
-#define GTTYPES_H
+#ifndef _GTTYPES_H_
+#define _GTTYPES_H_
 
 #define MAX_NODE 3 /*max number of child node*/
 #define MAX_COL 91 /*max colum in input file*/
@@ -8,8 +8,13 @@
 #define OK 1
 #define ERROR 0
 
+#define NO_MATCH 2
+
 #define YES 1
 #define NO 0
+
+#define _in
+#define _out
 
 #define __my_debug(FORMAT, ARG...) \
     printf("%s:%d %s: " FORMAT, __FILE__, __LINE__, __FUNCTION__, ##ARG)
@@ -23,6 +28,7 @@
 typedef struct tagTRIE_NODE{
 	char val;
 	int isword;
+    int mycount;
 	struct tagTRIE_NODE *next[MAX_NODE];
 }TRIE_NODE;
 

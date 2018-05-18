@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     printf("data has been sorted, and saved in sort_result.txt\n");
 
     
-    if (ERROR == myClassification(root, 10))
+    if (ERROR == myClassification(root, 3))
     {
         __my_debug("classification failed\n");
         return -1;

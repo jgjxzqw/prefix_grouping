@@ -89,8 +89,10 @@ int trie_insert(char *word, TRIE_NODE *root)
 
             /*assign for new node*/
 			newNode->val = word[i];
-			cur->next[indhash] = newNode;	
+            newNode->mycount = 0;
+			cur->next[indhash] = newNode;
 		}
+        cur->mycount++;
 		cur = cur->next[indhash];/*pointer jump to next node*/
 	}
 
@@ -250,10 +252,15 @@ int sortAndWriteFile(TRIE_NODE* root, const char *fileName)
 /*
  *  prefixmatch for input string in console
  * */
-int prefixMatch(TRIE_NODE* root, char *matchstr)
+int prefixMatch(_in TRIE_NODE* root, _in char *matchstr
+        , _out char matchbuf[MAX_LINE][MAX_COL], _out TRIE_NODE **cp)
 {
     int i;
     int a = 0;
+    if(NULL != *cp)
+    {
+        *cp = NULL;
+    }
 
     if (NULL == root)
     {
@@ -266,7 +273,9 @@ int prefixMatch(TRIE_NODE* root, char *matchstr)
         __my_debug("input null point\n");
         return ERROR;
     }
-    
+   
+    memset(matchbuf, 0, sizeof(char) * MAX_LINE * MAX_COL);
+
     /*initialize temp buffer*/
     char buf[MAX_COL];
     memset(buf, 0, sizeof(char) * MAX_COL);
@@ -299,6 +308,112 @@ int prefixMatch(TRIE_NODE* root, char *matchstr)
         }
     }
 
+    *cp = curp;
+    
+    /*travers all string with same prefix*/
+    if (ERROR == trie_travers(hd_buf, buf, curp, 0, &a))
+    {
+        __my_debug("travers error");
+        return ERROR;
+    }
+
+
+    FILE *fp = fopen("result.txt", "a");
+
+    /*print the string, with same prefix*/
+    for (i = 0; i < curp->mycount; i++)
+    {
+        if(NULL == strcpy(matchbuf[i], matchstr))
+        {
+            __my_debug("strcpy failed\n");
+            return ERROR;
+        }
+        strcat(matchbuf[i], hd_buf[i]); 
+        fprintf(fp, "%s\n", matchbuf[i]);
+    }
+
+    fprintf(fp, "\n");
+    fclose(fp);
+
+    printf("%s matching complete\n", matchstr);
+    return OK;
+}
+
+int prefixMatchNode(TRIE_NODE *root, char *matchstr
+        , TRIE_NODE **cp)
+{
+    int i;
+    int a = 0;
+    if(NULL != *cp)
+    {
+        *cp = NULL;
+    }
+
+    if (NULL == root)
+    {
+        __my_debug("null pointer\n");
+        return ERROR;
+    }
+
+    if (NULL == matchstr)
+    {
+        __my_debug("input null point\n");
+        return ERROR;
+    }
+
+    TRIE_NODE* curp = root;/*current node*/
+    
+    for (i = 0; i <= strlen(matchstr) - 1; i++)/*loop all 
+                                character in input string*/
+    {
+        int index = hstrie(matchstr[i]);/*hash maping input character*/
+        if (-1 == index)/*input wrong number, out of 0, 1, x*/
+        {
+            break;
+        }
+        if (NULL != curp->next[index])/*child node exeists, and equle
+                                        to input character, jump into next
+                                        node*/
+        {
+            curp = curp->next[index];
+        }
+        else/*no matching string in trie tree*/
+        {
+            printf("%s no matching string in data\n", matchstr);
+            return NO_MATCH;
+        }
+    }
+
+    *cp = curp;
+}
+
+
+int prefixMatchBuf(TRIE_NODE *curp
+        , char *matchstr
+        , char matchbuf[MAX_LINE][MAX_COL])
+{
+    if(NULL == curp)
+    {
+        __my_debug("null pointer\n");
+        return ERROR;
+    }
+    if(NULL == matchstr)
+    {
+        __my_debug("null pointer\n");
+        return ERROR;
+    }
+   
+    /*initialize temp buffer*/
+    char buf[MAX_COL];
+    memset(buf, 0, sizeof(char) * MAX_COL);
+
+    /*initialize 2 dementional buffer, 
+             that used to save sorted data in trie tree*/
+    char hd_buf[MAX_LINE][MAX_COL];
+    memset(hd_buf, 0, sizeof(char) * MAX_LINE * MAX_COL);
+
+    int a = 0;
+    int i;
 
     /*travers all string with same prefix*/
     if (ERROR == trie_travers(hd_buf, buf, curp, 0, &a))
@@ -307,19 +422,20 @@ int prefixMatch(TRIE_NODE* root, char *matchstr)
         return ERROR;
     }
 
+
     FILE *fp = fopen("result.txt", "a");
 
     /*print the string, with same prefix*/
-    for (i = 0; i < a; i++)
+    for (i = 0; i < curp->mycount; i++)
     {
-        //printf("%s%s\n", input, hd_buf[i]);
-        fprintf(fp, "%s%s\n", matchstr, hd_buf[i]);
+        strcpy(matchbuf[i], matchstr);
+        strcat(matchbuf[i], hd_buf[i]); 
+        fprintf(fp, "%s\n", matchbuf[i]);
     }
+   
     fprintf(fp, "\n");
     fclose(fp);
 
-    printf("%s matching complete\n", matchstr);
-    return OK;
 }
 
 /*
@@ -347,6 +463,8 @@ int myClassification(TRIE_NODE* root, unsigned int classnum)
     }
 
     char **buffer;//used to save prefix
+    char matchbuf[MAX_LINE][MAX_COL];
+    TRIE_NODE *cp;
     if (ERROR == convertNum2Bina(&buffer, classnum))//generate a fixed-length prefix
     {
         __my_debug("convert failed\n");
@@ -355,7 +473,13 @@ int myClassification(TRIE_NODE* root, unsigned int classnum)
     
     for (i = 0; i <= row - 1; i++)
     {
-        prefixMatch(root, buffer[i]);// write same prefix into file
+       
+        if (NO_MATCH != prefixMatchNode(root, buffer[i], &cp))
+        {
+            prefixMatchBuf(cp, buffer[i], matchbuf);
+            addFile(matchbuf, "tempresult.txt", cp->mycount);
+
+        }
     }
 
     return OK;
@@ -436,13 +560,14 @@ int myExtent(char **in, char ***res, int row, int col)
             return ERROR;
         }
     }
-    
+   
+    int len = 0;
     for (i = 0; i <= MAX_NODE - 1; i++)
     {
        for (j = 0; j <= row -1; j++)
        {
-            strcpy((*res)[i * row + j], in[j]);
-            strcat((*res)[i * row + j], hs[i]);
+            strcpy((*res)[len], in[j]);
+            strcat((*res)[len++], hs[i]);
        }
     }
 

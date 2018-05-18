@@ -1,5 +1,5 @@
-#ifndef MYFILE_H_ //_...
-#define MYFILE_H_
+#ifndef _MYFILE_H_ 
+#define _MYFILE_H_
 
 #include "gttypes.h"
 
@@ -32,6 +32,9 @@ int readFile(char buffer[MAX_LINE][MAX_COL],
 ************************************************************************/
 int writeFile(char buffer[MAX_LINE][MAX_COL], 
         const char *fileName);
+
+int addFile(char buffer[MAX_LINE][MAX_COL],
+         const char *fileName, int num);
 
 
 #endif // MYFILE_H_

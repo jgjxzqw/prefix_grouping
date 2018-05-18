@@ -60,3 +60,24 @@ int writeFile(char buf[MAX_LINE][MAX_COL], const char *fileName)
     fclose(fp);/*close stram*/
     return OK;
 }
+
+int addFile(char buf[MAX_LINE][MAX_COL], const char *fileName, int num)
+{
+
+    FILE *fp = fopen(fileName, "a");
+    if (NULL == fp)
+    {
+        __my_debug("can not open file");
+        return ERROR;
+    }
+
+    fprintf(fp, "%d\n", num);
+    for (int i = 0; i < num; i++)/*write data into output stream*/
+    {
+        fprintf(fp, "%s\n", buf[i]);
+    }
+    fprintf(fp, "\n");
+
+    fclose(fp);/*close stram*/
+    return OK;
+}
