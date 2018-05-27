@@ -118,15 +118,43 @@ int sortAndWriteFile(TRIE_NODE* root, const char* fileName);
 *Relation : none
 *OtherInfo : none
 ************************************************************************/
-int prefixMatch(TRIE_NODE *root
-        , char *matchstr
-        , char matchbuf[MAX_LINE][MAX_COL]
-        , TRIE_NODE **cp);
+//int prefixMatch(TRIE_NODE *root
+//        , char *matchstr
+//        , char matchbuf[MAX_LINE][MAX_COL]
+//        , TRIE_NODE **cp);
 
+
+/***********************************************************************
+*FunctionName : prefixMatchNode
+*Author : Zheng Qinwen
+*CreateDate : Thu 13 May 2018 04:44:51 PM
+*Descreption : find the node under the prefix
+*InputParam : root - begin node of Trie tree for serching
+                matchstr - prefix
+                cp - node under prefix
+*OutputParam : 
+*ReturnValue : 
+*Relation : none
+*OtherInfo : none
+************************************************************************/
 int prefixMatchNode(TRIE_NODE *root
         , char *matchstr
         , TRIE_NODE **cp);
 
+
+/***********************************************************************
+*FunctionName : prefixMatchBuf
+*Author : Zheng Qinwen
+*CreateDate : Thu 13 May 2018 04:44:51 PM
+*Descreption : find the match buf of prefix str
+*InputParam : root - begin node of Trie tree for serching
+                matchstr - prefix
+                matchbuf - match str
+*OutputParam : None
+*ReturnValue : none
+*Relation : none
+*OtherInfo : none
+************************************************************************/
 int prefixMatchBuf(TRIE_NODE *curp
         , char *matchstr
         , char matchbuf[MAX_LINE][MAX_COL]);
