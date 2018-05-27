@@ -48,7 +48,9 @@ int main(int argc, char *argv[])
     }
     printf("data has been sorted, and saved in sort_result.txt\n");
 
-    int i, j;
+    myHeapClassification(88, root);
+
+    /*int i, j;
 
 
     HEAPSQ b;
@@ -72,9 +74,9 @@ int main(int argc, char *argv[])
     expantionHeap(&b, root);
     expantionHeap(&b, root);
     expantionHeap(&b, root);
-    expantionHeap(&b, root);
+    expantionHeap(&b, root);*/
     
-    for(i = 0; i < 5; i++)
+    /*for(i = 0; i < 5; i++)
     {
         ElemType c = (b.heap)[i];
         if(NULL == c)
@@ -94,7 +96,7 @@ int main(int argc, char *argv[])
             }
         
         }
-    }
+    }*/
 
     
     if (ERROR == myClassification(root, 2))

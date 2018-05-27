@@ -20,6 +20,7 @@ ElemType deleteHeap(HEAPSQ *HBT);
 
 void printnode(ElemType x);
 
+int myHeapClassification(int classnum, TRIE_NODE *root);
 
 
 #endif

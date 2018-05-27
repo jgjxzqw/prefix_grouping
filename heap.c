@@ -276,6 +276,65 @@ int transNode(ElemType x, TRIE_NODE *root)
     return OK;
 }
 
+int myHeapClassification(int classnum, TRIE_NODE *root)
+{
+    int i, j;
+
+    HEAPSQ b;
+    initHeap(&b, 10);
+    ElemType x;
+    
+    ElemType a = (ElemType)malloc(sizeof(HEAP_NODE));
+    a->val = 128;
+
+    a->flag[1] = 1;
+    a->flag[0] = 0;
+    a->flag[2] = 0;
+    //a[0]->flag[0] = 1;
+    strcpy(a->buf[1], "");
+    strcpy(a->buf[0], "");
+    strcpy(a->buf[2], "");
+
+    insertHeap(&b, a);
+    
+    for (i = 0; i < classnum; i++)
+    {
+        expantionHeap(&b, root);
+    }
+    for(i = 0; i < classnum; i++)
+    {
+        ElemType c = (b.heap)[i];
+        if(NULL == c)
+        {
+            __my_debug("haha\n");
+        }
+        else
+        {
+            __my_debug("val-->%d\n", c->val);
+            for (j = 0; j < MAX_NODE; j++)
+            {
+                if (1 == c->flag[j])
+                {
+                    TRIE_NODE *cp;
+                    char matchbuf[MAX_LINE][MAX_COL];
+                    //__my_debug("prefix-->%s\n", c->buf[j]);
+                    //printnode(c);
+                    prefixMatchNode(root, c->buf[j], &cp);
+                    prefixMatchBuf(cp, c->buf[j], matchbuf);
+                    for(int k = 0; k < cp->mycount; k++)
+                    {
+                        printf("%s%s\n", c->buf[j], matchbuf[k]);
+                    }
+                }
+            }
+            printf("\n");
+        
+        }
+    }
+
+
+}
+
 void printnode(ElemType x)
 {
     int i;
