@@ -177,36 +177,34 @@ int expantionHeap(HEAPSQ *HBT, TRIE_NODE *root)
     {
         if(1 == currnode->flag[i])
         {
-            //maxindx = i;
-            //char matchstr[MAX_COL] = currnode->buf[i];
             TRIE_NODE *cp;
             if(ERROR == prefixMatchNode(root, currnode->buf[i], &cp))
             {
                 __my_debug("match node error\n");
                 return ERROR;
             }
-            if(cp->val > maxval)
+            if(cp->mycount > maxval)
             {
-                maxval = cp->val;
+                //__my_debug("%s\n", currnode->buf[i]);
+                //__my_debug("%d\n", cp->mycount);
+                maxval = cp->mycount;
                 maxindx = i;
-                //__my_debug("%s\n", currnode->buf[i]);    
-                //__my_debug("%d\n", cp->val);    
             }
-            //__my_debug("%s\n", currnode->buf[i]);    
-            //__my_debug("%d\n", cp->val);    
         }
-        //bumflag += currnode->flag[i];
     }
 
     for (i = 0; i < MAX_NODE; i++)
     {
+        __my_debug("%s\n", newnode_1->buf[i]);
         if (maxindx == i)
         {
-            newnode_1->flag[maxindx] = 0;    
+            newnode_1->flag[i] = 0;    
+            //newnode_2->flag[i] = 1;
         }
         else
         {
-            newnode_2->flag[maxindx] = 0;
+            newnode_2->flag[i] = 0;
+            //newnode_1->flag[i] = 1;
         }
         newnode_2->val = maxval;
         newnode_1->val = currnode->val - maxval;
@@ -215,8 +213,12 @@ int expantionHeap(HEAPSQ *HBT, TRIE_NODE *root)
     
     
     //__my_debug("%s\n", currnode->buf[i]);    
-    __my_debug("%d\n", newnode_1->val);    
-    __my_debug("%d\n", newnode_2->val);    
+    //__my_debug("%d\n", newnode_1->mycount);    
+    //__my_debug("%d\n", newnode_2->mycount);    
+    
+    //printnode(newnode_1);
+
+    //printnode(newnode_2);
 
     insertHeap(HBT, newnode_1);
     insertHeap(HBT, newnode_2);
@@ -274,3 +276,23 @@ int transNode(ElemType x, TRIE_NODE *root)
     return OK;
 }
 
+void printnode(ElemType x)
+{
+    int i;
+    for (i = 0; i < MAX_NODE; i++)
+    {
+        __my_debug("%d, ", x->flag[i]);
+    }
+    
+    printf("\n");
+    for (i = 0; i < MAX_NODE; i++)
+    {
+        __my_debug("%s, ", x->buf[i]);
+    }
+
+    printf("\n");
+    __my_debug("%d, ", x->val);
+
+    printf("\n");
+    printf("\n");
+}

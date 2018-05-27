@@ -48,71 +48,16 @@ int main(int argc, char *argv[])
     }
     printf("data has been sorted, and saved in sort_result.txt\n");
 
-    //__my_debug("%d\n", TRUE);
-
-    int i;
-    /* 
-    ElemType a[8];
-    for(i = 0; i < 10; i++)
-    {
-        a[i] = (ElemType)malloc(sizeof(HEAP_NODE));
-        memset(a[i], 0, sizeof(HEAP_NODE));
-    
-        //a[i]->val = 20 -  2 * i;
-    }
-    
-    a[0]->val = 12;
-
-    //for (i = 0; i < 3; i++)
-    a[0]->flag[1] = 1;
-    a[0]->flag[0] = 0;
-    a[0]->flag[2] = 0;
-    //a[0]->flag[0] = 1;
-    strcpy(a[0]->buf[1], "");
-    strcpy(a[0]->buf[0], "0x");
-    strcpy(a[0]->buf[2], "11");
-    //strcpy(a[0]->buf[0], "00");
-    //strcpy(a[0]->buf[0], "01");
-    
-    //transeNode(b);
-
-
-    a[1]->val = 3;
-    a[2]->val = 1;
-    a[3]->val = 124;
-    a[4]->val = 25;
-    a[5]->val = 153;
-    a[6]->val = 465;
-    a[7]->val = 13;
-
-
-    for(i = 0; i < 3; i++)
-    {
-        __my_debug("%d\n", a[0]->flag[i]); 
-        __my_debug("%s\n", a[0]->buf[i]); 
-    }
-    printf("\n");
-    
-    transNode(a[0]);
-    //expantionHeap();
-
-    for(i = 0; i < 3; i++)
-    {
-        __my_debug("%d\n", a[0]->flag[i]); 
-        __my_debug("%s\n", a[0]->buf[i]); 
-    }
-    printf("\n");*/
+    int i, j;
 
 
     HEAPSQ b;
     initHeap(&b, 10);
     ElemType x;
     
-    //expantionHeap(&b, root);
-    
     //ElemType a = 
     ElemType a = (ElemType)malloc(sizeof(HEAP_NODE));
-    a->val = 217;
+    a->val = 128;
 
     a->flag[1] = 1;
     a->flag[0] = 0;
@@ -127,13 +72,9 @@ int main(int argc, char *argv[])
     expantionHeap(&b, root);
     expantionHeap(&b, root);
     expantionHeap(&b, root);
+    expantionHeap(&b, root);
     
-    /*for(i = 0; i < 8; i++)
-    {
-        insertHeap(&b, a[i]);
-    }*/
-
-    for(i = 0; i < 4; i++)
+    for(i = 0; i < 5; i++)
     {
         ElemType c = (b.heap)[i];
         if(NULL == c)
@@ -142,12 +83,21 @@ int main(int argc, char *argv[])
         }
         else
         {
-            __my_debug("-->%d\n", c->val);
+            __my_debug("val-->%d\n", c->val);
+            for (j = 0; j < MAX_NODE; j++)
+            {
+                if (1 == c->flag[j])
+                {
+                    __my_debug("prefix-->%s\n", c->buf[j]);
+                    //printnode(c);
+                }
+            }
+        
         }
     }
 
     
-    if (ERROR == myClassification(root, 3))
+    if (ERROR == myClassification(root, 2))
     {
         __my_debug("classification failed\n");
         return -1;

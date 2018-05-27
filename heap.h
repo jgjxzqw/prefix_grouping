@@ -18,6 +18,8 @@ int transNode(ElemType x, TRIE_NODE *root);
 
 ElemType deleteHeap(HEAPSQ *HBT);
 
+void printnode(ElemType x);
+
 
 
 #endif
