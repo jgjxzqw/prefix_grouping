@@ -280,6 +280,22 @@ int myHeapClassification(int classnum, TRIE_NODE *root)
 {
     int i, j;
 
+    //clear the file
+    FILE *fp_clear = fopen("myclass.txt", "w"); 
+    if(NULL == fp_clear)
+    {
+        __my_debug("error\n");
+        return ERROR;
+    }
+    fclose(fp_clear);
+    
+    FILE *fp = fopen("myclass.txt", "a"); 
+    if(NULL == fp)
+    {
+        __my_debug("error\n");
+        return ERROR;
+    }
+
     HEAPSQ b;
     initHeap(&b, 10);
     ElemType x;
@@ -324,14 +340,16 @@ int myHeapClassification(int classnum, TRIE_NODE *root)
                     for(int k = 0; k < cp->mycount; k++)
                     {
                         printf("%s%s\n", c->buf[j], matchbuf[k]);
+                        fprintf(fp, "%s%s\n", c->buf[j], matchbuf[k]); 
                     }
                 }
             }
             printf("\n");
+            fprintf(fp, "\n");
         
         }
     }
-
+    fclose(fp);
 
 }
 

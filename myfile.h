@@ -36,5 +36,6 @@ int writeFile(char buffer[MAX_LINE][MAX_COL],
 int addFile(char buffer[MAX_LINE][MAX_COL],
          const char *fileName, int num);
 
+//int clearFile(const char *filename)
 
 #endif // MYFILE_H_
