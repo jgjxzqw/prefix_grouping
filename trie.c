@@ -332,19 +332,12 @@ int prefixMatchBuf(TRIE_NODE *curp
         return ERROR;
     }
 
-
-    //FILE *fp = fopen("result.txt", "a");
-
     /*print the string, with same prefix*/
     for (i = 0; i < curp->mycount; i++)
     {
         strcpy(matchbuf[i], matchstr);
         strcat(matchbuf[i], hd_buf[i]); 
-        //fprintf(fp, "%s\n", matchbuf[i]);
     }
-   
-    //fprintf(fp, "\n");
-    //fclose(fp);
 
 }
 

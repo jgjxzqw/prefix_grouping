@@ -1,3 +1,14 @@
+/*************************************************************************
+*File Name : heap.c
+*Author : Zheng Qinwen
+*CreateDate : Mon 28 May 2018 10:40:16 PM
+*Reversion : v1.1
+*Description : c files of heap operation
+*Copyright : Fiberhome
+*OtherInfo : None
+*ModifyLog : None
+*************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,12 +19,12 @@
 
 int initHeap(HEAPSQ *HBT, int MS)
 {
-   if (MS <= 0)
+   if (MS <= 0)// size of heap < 0
    {
         __my_debug("length < 0\n");
         return ERROR;
    }
-   HBT->heap = malloc(MS * sizeof(ElemType));
+   HBT->heap = malloc(MS * sizeof(ElemType));//applymemory for heap
 
    if(NULL == HBT->heap)
    {
@@ -25,18 +36,22 @@ int initHeap(HEAPSQ *HBT, int MS)
    HBT->len = 0;
 }
 
-void clearHeap(HEAPSQ* HBT)// mem leak
+void clearHeap(HEAPSQ* HBT)
 {
+    int i;
+    for (i = 0; i < HBT->len; i++)//free all node
+    {
+        free(HBT->heap[i]);
+    }
     if (HBT->heap != NULL)
     {
         free(HBT->heap);
         HBT->len = 0;
         HBT->MaxSize = 0;
-
     }
 }
 
-int emptyHeap(HEAPSQ* HBT)
+int emptyHeap(HEAPSQ* HBT)//determine heap is empty
 {
     if (HBT->len == 0)
         return 1;
@@ -48,30 +63,29 @@ int emptyHeap(HEAPSQ* HBT)
 int insertHeap(HEAPSQ* HBT, ElemType x)
 {
     int i;
-    if (HBT->len == HBT->MaxSize)
+    if (HBT->len == HBT->MaxSize)// no memory in heap, expand space
     {
         ElemType *p;
         p = realloc(HBT->heap, 2 * HBT->MaxSize * sizeof(ElemType));
         if (NULL == p)
         {
-            __my_debug("存储空间用完！\n");
+            __my_debug("no memory in heap\n");
             return ERROR;
         }
-        printf("存储空间已扩展为原来的2倍！\n");
+        printf("expand memory\n");
         HBT->heap = p;
         HBT->MaxSize = 2 * HBT->MaxSize;
-
     }
-    HBT->heap[HBT->len] = x; //向堆尾添加新元素
-    HBT->len++; //堆长度加1
-    i = HBT->len - 1; //i指向待调整元素的位置，即其数组下标，初始指向新元素所在的堆尾位置
+    HBT->heap[HBT->len] = x; //add new data to heap
+    HBT->len++; //length add
+    i = HBT->len - 1; //i points to the element to be adjusted
     while (i != 0)
     {
-        int j = (i - 1) / 2; //j指向下标为i的元素的双亲
+        int j = (i - 1) / 2; //j is childs of i
         if (x->val <= HBT->heap[j]->val)
             break;
-        HBT->heap[i] = HBT->heap[j]; //将双亲元素下移到待调整元素的位置
-        i = j; //使待调整位置变为其双亲位置，进行下一次循环
+        HBT->heap[i] = HBT->heap[j]; 
+        i = j; 
     }
     HBT->heap[i] = x;
 
@@ -89,25 +103,24 @@ ElemType deleteHeap(HEAPSQ* HBT)
     }
     temp = HBT->heap[0];
     HBT->len--;
-    if (HBT->len == 0) //若删除操作后堆为空则返回
+    if (HBT->len == 0) 
         return temp;
-    x = HBT->heap[HBT->len]; //将待调整的原堆尾元素暂存x中，以便放入最终位置
-    __my_debug("%d\n, %d\n-->", x->val, HBT->len);
-    i = 0; //用i指向待调整元素的位置，初始指向堆顶位置
-    j = 2 * i + 1;//用j指向i的左孩子位置，初始指向下标为1的位置
-    while (j <= HBT->len - 1)//寻找待调整元素的最终位置，每次使孩子元素上移一层，调整到孩子为空时止
+    x = HBT->heap[HBT->len];// x is the top element 
+    i = 0; 
+    j = 2 * i + 1;// j is child of i
+    while (j <= HBT->len - 1)//adjust element layer by layer
     {
-        if (j < HBT->len - 1 && HBT->heap[j]->val < HBT->heap[j+1]->val)//若存在右孩子且较小，使j指向右孩子
+        if (j < HBT->len - 1 && HBT->heap[j]->val < HBT->heap[j+1]->val)
             j++;
-        if (x->val >= HBT->heap[j]->val) //若x比其较小的孩子还小，则调整结束，退出循环
+        if (x->val >= HBT->heap[j]->val)
             break;
-        HBT->heap[i] = HBT->heap[j];//否则，将孩子元素移到双亲位置
-        i = j; //将待调整位置变为其较小的孩子位置
-        j = 2 * i + 1;//将j变为新的待调整位置的左孩子位置，继续下一次循环
+        HBT->heap[i] = HBT->heap[j];
+        i = j; 
+        j = 2 * i + 1;
 
     }
-    HBT->heap[i] = x; //把x放到最终位置
-    return temp; //返回原堆顶元素
+    HBT->heap[i] = x; 
+    return temp;
 }
 
 int expantionHeap(HEAPSQ *HBT, TRIE_NODE *root)
@@ -119,7 +132,7 @@ int expantionHeap(HEAPSQ *HBT, TRIE_NODE *root)
         __my_debug("堆已空，退出运行！\n");
         return ERROR;
     }
-    ElemType currnode = deleteHeap(HBT);
+    ElemType currnode = deleteHeap(HBT);//currnode is the top element
 
     //find the indx and bumflag of curr node 
     int bumflag = 0;
@@ -134,16 +147,13 @@ int expantionHeap(HEAPSQ *HBT, TRIE_NODE *root)
         bumflag += currnode->flag[i];
     }
 
-    while (1 == bumflag)
+    while (1 == bumflag)//loop until there is at least 2 perfix in node
     {
-        //if (1 == bumflag)//only one preficurrnode in node
-        //{
         if(ERROR == transNode(currnode, root))
         {
             __my_debug("error in transenode\n");
             return ERROR;
         }
-        //}
 
         for (i = 0; i < MAX_NODE; i++)
         {
@@ -185,45 +195,31 @@ int expantionHeap(HEAPSQ *HBT, TRIE_NODE *root)
             }
             if(cp->mycount > maxval)
             {
-                //__my_debug("%s\n", currnode->buf[i]);
-                //__my_debug("%d\n", cp->mycount);
                 maxval = cp->mycount;
                 maxindx = i;
             }
         }
     }
 
+    //assignment for new node
     for (i = 0; i < MAX_NODE; i++)
     {
-        __my_debug("%s\n", newnode_1->buf[i]);
+        //__my_debug("%s\n", newnode_1->buf[i]);
         if (maxindx == i)
         {
             newnode_1->flag[i] = 0;    
-            //newnode_2->flag[i] = 1;
         }
         else
         {
             newnode_2->flag[i] = 0;
-            //newnode_1->flag[i] = 1;
         }
         newnode_2->val = maxval;
         newnode_1->val = currnode->val - maxval;
-
     }
     
-    
-    //__my_debug("%s\n", currnode->buf[i]);    
-    //__my_debug("%d\n", newnode_1->mycount);    
-    //__my_debug("%d\n", newnode_2->mycount);    
-    
-    //printnode(newnode_1);
-
-    //printnode(newnode_2);
-
+    //add new node to heap
     insertHeap(HBT, newnode_1);
     insertHeap(HBT, newnode_2);
-
-
 }
 
 /*
@@ -249,24 +245,20 @@ int transNode(ElemType x, TRIE_NODE *root)
         }
         bumflag += x->flag[i];
     }
-    assert(1 == bumflag);
+    assert(1 == bumflag);//make sure there is only one prefix
 
-    //__my_debug("%d\n", indx); 
-    
     char temp[MAX_COL] = {0};
     strcpy(temp, x->buf[indx]);
 
     int len = strlen(x->buf[indx]);
-    //__my_debug("%d\n", len);
     temp[len+1] = '\0';
 
+    //add '0' '1' 'x' to prefix
     TRIE_NODE *cp;
     for (i = 0; i < MAX_NODE; i++)
     { 
         temp[len] = hs[i];
         x->flag[i] = 1;
-        //__my_debug("%d\n", len);
-        //__my_debug("%s\n", temp);
         strcpy(x->buf[i], temp);
         if (NO_MATCH == prefixMatchNode(root, temp, &cp))
         {
@@ -281,7 +273,7 @@ int myHeapClassification(int classnum, TRIE_NODE *root)
     int i, j;
 
     //clear the file
-    FILE *fp_clear = fopen("myclass.txt", "w"); 
+    FILE *fp_clear = fopen("result_myclass.txt", "w"); 
     if(NULL == fp_clear)
     {
         __my_debug("error\n");
@@ -289,68 +281,70 @@ int myHeapClassification(int classnum, TRIE_NODE *root)
     }
     fclose(fp_clear);
     
-    FILE *fp = fopen("myclass.txt", "a"); 
+    //open file
+    FILE *fp = fopen("result_myclass.txt", "a"); 
     if(NULL == fp)
     {
         __my_debug("error\n");
         return ERROR;
     }
 
-    HEAPSQ b;
-    initHeap(&b, 10);
+    HEAPSQ heapsq;
+    initHeap(&heapsq, 10);
     ElemType x;
-    
-    ElemType a = (ElemType)malloc(sizeof(HEAP_NODE));
-    a->val = 128;
+   
+    //initial first node
+    ElemType firstnode = (ElemType)malloc(sizeof(HEAP_NODE));
+    firstnode->val = 128;
+    firstnode->flag[1] = 1;
+    firstnode->flag[0] = 0;
+    firstnode->flag[2] = 0;
+    strcpy(firstnode->buf[1], "");
+    strcpy(firstnode->buf[0], "");
+    strcpy(firstnode->buf[2], "");
 
-    a->flag[1] = 1;
-    a->flag[0] = 0;
-    a->flag[2] = 0;
-    //a[0]->flag[0] = 1;
-    strcpy(a->buf[1], "");
-    strcpy(a->buf[0], "");
-    strcpy(a->buf[2], "");
-
-    insertHeap(&b, a);
+    insertHeap(&heapsq, firstnode);//insert first node to heap
     
-    for (i = 0; i < classnum; i++)
+    for (i = 0; i < classnum; i++)//expand node classnum times
     {
-        expantionHeap(&b, root);
+        expantionHeap(&heapsq, root);
     }
-    for(i = 0; i < classnum; i++)
+
+    for (i = 0; i < classnum; i++)//write ever class to file
     {
-        ElemType c = (b.heap)[i];
+        ElemType c = (heapsq.heap)[i];
         if(NULL == c)
         {
             __my_debug("haha\n");
         }
         else
         {
-            __my_debug("val-->%d\n", c->val);
+            //__my_debug("val-->%d\n", c->val);
             for (j = 0; j < MAX_NODE; j++)
             {
                 if (1 == c->flag[j])
                 {
                     TRIE_NODE *cp;
                     char matchbuf[MAX_LINE][MAX_COL];
-                    //__my_debug("prefix-->%s\n", c->buf[j]);
-                    //printnode(c);
                     prefixMatchNode(root, c->buf[j], &cp);
                     prefixMatchBuf(cp, c->buf[j], matchbuf);
                     for(int k = 0; k < cp->mycount; k++)
                     {
-                        printf("%s%s\n", c->buf[j], matchbuf[k]);
+                        //printf("%s%s\n", c->buf[j], matchbuf[k]);
                         fprintf(fp, "%s%s\n", c->buf[j], matchbuf[k]); 
                     }
                 }
             }
-            printf("\n");
+            //printf("\n");
             fprintf(fp, "\n");
         
         }
     }
     fclose(fp);
+    
+    printf("classify success, there are %d class in file, please check result_myclass.txt\n", classnum);
 
+    return OK;
 }
 
 void printnode(ElemType x)

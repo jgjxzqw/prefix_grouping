@@ -21,12 +21,13 @@ ModifyLog : None
 
 int main(int argc, char *argv[])
 {
+    int classnum;
     /*initialize buffer for saving file data*/
 	char buffer[MAX_LINE][MAX_COL];
     memset(buffer, 0, sizeof(char) * MAX_LINE * MAX_COL);
 
     /*read file into buffer*/
-	if (ERROR == readFile(buffer, "../Sample000111x.txt"))
+	if (ERROR == readFile(buffer, "Sample000111x.txt"))
     {
         __my_debug("read file error\n");
         return -1;
@@ -48,14 +49,22 @@ int main(int argc, char *argv[])
     }
     printf("data has been sorted, and saved in sort_result.txt\n");
 
-    myHeapClassification(5, root);
+    printf("please input class number: ");
+    scanf("%d", &classnum);
 
-    
+    //using heap to classify data
+    if (ERROR == myHeapClassification(classnum, root))
+    {
+        __my_debug("myheapclassification failed\n");
+        return -1;
+    }
+
+    /* 
     if (ERROR == myClassification(root, 2))
     {
         __my_debug("classification failed\n");
         return -1;
-    }
+    }*/
 
     /*destroy the trie tree*/
     if (ERROR == trie_destroy(root))
